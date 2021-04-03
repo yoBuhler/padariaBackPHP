@@ -3,7 +3,7 @@
 require_once "config.php";
 require_once "util.php";
 
-function updateUser($data)
+function updateProduct($data)
 {
     global $link;
 
@@ -64,22 +64,30 @@ function updateUser($data)
                     $returned['erroractive'] = 'ERROR: This active ' . $data['active'] . ' cannot updated';
                 }
             }
-            if (paramsIsValid($data, array(['birth', 'str']))) {
-                $data['birth'] = trim($data['birth']);
-                if (dateIsValid($data['birth'])) {
-                    $data['birth'] = convertToDate($data['birth']);
-                    $data['birth'] = $data['birth']->format('Y-m-d H:i:s');
-                    if ($data['birth'] !== $_SESSION['currentUser']->birth) {
-                        $sql = "UPDATE product SET birth='" . $data['birth'] . "' WHERE id = " . $data['id'];
+            if (paramsIsValid($data, array(['imagebase64', 'str']))) {
+                if (count(explode(';', $data['imagebase64'])) == 2) {
+                    list($type, $dataImg) = explode(';', $data['imagebase64']);
+                    if (count(explode(',', $dataImg)) == 2) {
+                        list(, $dataImg) = explode(',', $dataImg);
+                        $dataImg = base64_decode($dataImg);
+
+                        // file_put_contents('img.' . mb_split('/', $type)[1], $dataImg);
+
+                        // $path = 'img.' . mb_split('/', $type)[1];
+                        // $dataImg = file_get_contents($path);
+                        
+                        $sql = "UPDATE product SET image='" . addslashes($dataImg) . "', image_type='" . mb_split('/', $type)[1] . "' WHERE id = " . $data['id'];
                         if (mysqli_query($link, $sql) === true) {
-                            $_SESSION['currentUser']->birth = $data['birth'];
-                            $returned['birth'] = $_SESSION['currentUser']->birth;
+                            $returned['image'] = 'data:image/' . mb_split('/', $type)[1] . ';base64,' . base64_encode($dataImg);
+                            $returned['image_type'] = mb_split('/', $type)[1];
                         } else {
-                            $returned['errorBirth'] = 'ERROR: This birth ' . $data['birth'] . ' cannot updated';
+                            $returned['errorImagebase64'] = 'ERROR: This imagebase64 ' . $data['imagebase64'] . ' cannot updated';
                         }
+                    } else {
+                        $returned['errorImagebase64'] = 'ERROR: This imagebase64 ' . $data['imagebase64'] . ' are not a base64 image';
                     }
                 } else {
-                    $returned['errorBirth'] = 'ERROR: This birth ' . $data['birth'] . ' is not valid';
+                    $returned['errorImagebase64'] = 'ERROR: This imagebase64 ' . $data['imagebase64'] . ' are not a base64 image';
                 }
             }
             // Close connection

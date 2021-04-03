@@ -7,6 +7,7 @@ include('route.php');
 include('login.php');
 include('createUser.php');
 include('updateUser.php');
+include('updateProduct.php');
 
 // Products Class
 
@@ -59,4 +60,11 @@ Route::add('/user/update/', function () {
     updateUser($data);
 }, 'post');
 
+Route::add('/product/update/', function () {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $data['active'] = (bool) $data['active'];
+    updateProduct($data);
+}, 'post');
+
 Route::run('/');
+ 

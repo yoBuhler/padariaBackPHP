@@ -52,7 +52,7 @@ function paramsIsValid($data, $arrayNamesAndTypes)
                     $_validateData["error" . ucfirst($key)] = 'ERROR: ' . $key . ' is not numeric';
                 }
             } else if ($type == 'bool') {
-                if (!is_bool(trim($data[$key]))) {
+                if (!is_bool($data[$key])) {
                     $_returned = false;
                     $_validateData["error" . ucfirst($key)] = 'ERROR: ' . $key . ' is not boolean';
                 }
