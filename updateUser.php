@@ -96,7 +96,7 @@ function updateUser($data)
                         $sql = "UPDATE user SET birth='" . $data['birth'] . "' WHERE id = " . $_SESSION['currentUser']->id;
                         if (mysqli_query($link, $sql) === true) {
                             $_SESSION['currentUser']->birth = $data['birth'];
-                            $returned['birth'] = $_SESSION['currentUser']->birth;
+                            $returned['birth'] = (new Datetime($_SESSION['currentUser']->birth))->format(DATE_ATOM);
                         } else {
                             $returned['errorBirth'] = 'ERROR: This birth ' . $data['birth'] . ' cannot updated';
                         }

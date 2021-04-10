@@ -56,6 +56,11 @@ function paramsIsValid($data, $arrayNamesAndTypes)
                     $_returned = false;
                     $_validateData["error" . ucfirst($key)] = 'ERROR: ' . $key . ' is not boolean';
                 }
+            } else if ($type == 'arr') {
+                if (!is_array($data[$key])) {
+                    $_returned = false;
+                    $_validateData["error" . ucfirst($key)] = 'ERROR: ' . $key . ' is not a array';
+                }
             }
         } else {
             $_returned = false;

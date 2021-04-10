@@ -1,5 +1,10 @@
 <?php
 
+
+header("Access-Control-Allow-Origin: *");
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
+
+
 class Route
 {
 
@@ -7,7 +12,7 @@ class Route
     private static $pathNotFound = null;
     private static $methodNotAllowed = null;
 
-    public static function add($expression, $function, $method = 'get')
+    public static function add($expression, $function, $method = array('get'))
     {
         array_push(self::$routes, array(
             'expression' => $expression,
@@ -68,7 +73,7 @@ class Route
                 $path_match_found = true;
 
                 // Check method match
-                if (strtolower($method) == strtolower($route['method'])) {
+                if (in_array(strtolower($method), $route['method'])) {
 
                     array_shift($matches); // Always remove first element. This contains the whole string
 

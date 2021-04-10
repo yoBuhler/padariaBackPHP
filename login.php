@@ -22,7 +22,7 @@ function login($data)
                     session_start();
                     $return->id = $currentUser["id"];
                     $return->name = $currentUser["name"];
-                    $return->birth = $currentUser["birth"];
+                    $return->birth = $currentUser["birth"] == NULL ? $currentUser["birth"] : (new Datetime($currentUser["birth"]))->format(DATE_ATOM);
                     $return->login = $currentUser["login"];
                     $return->cpf = $currentUser["cpf"];
                     $return->mail = $currentUser["mail"];
