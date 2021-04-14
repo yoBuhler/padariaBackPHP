@@ -30,10 +30,9 @@ function convertToDate($date)
     return $date;
 }
 
-function paramsIsValid($data, $arrayNamesAndTypes)
+function paramsIsValid($data, $arrayNamesAndTypes, $_validateData)
 {
     $_returned = true;
-    $_validateData = array();
     foreach ($arrayNamesAndTypes as list($key, $type)) {
         if (array_key_exists($key, $data)) {
             if ($type == 'str') {
@@ -66,11 +65,11 @@ function paramsIsValid($data, $arrayNamesAndTypes)
             $_returned = false;
         }
     }
-    if (!empty($_validateData)) {
-        echo json_encode($_validateData);
-    }
+    // if (!empty($_validateData)) {
+    //     echo json_encode($_validateData);
+    // }
 
-    return $_returned;
+    return array($_returned, $_validateData);
 }
 
 function isAuthenticated()
@@ -95,7 +94,7 @@ function isAuthenticated()
     }
 }
 
-function loginAlreadyExists($login, $link)
+function loginAlreadyExists($login, $link, $_validateData)
 {
     $sql = "SELECT id FROM user WHERE login = ?";
     $_returned = true;
@@ -117,12 +116,12 @@ function loginAlreadyExists($login, $link)
                 $_returned = false;
             }
         } else {
-            echo "Oops! Something went wrong. Please try again later.";
+            $_validateData['errorLogin'] = 'ERROR: connection with the SQL was interupt';
         }
 
         // Close statement
         mysqli_stmt_close($stmt);
     }
 
-    return $_returned;
+    return array($_returned, $_validateData);
 }

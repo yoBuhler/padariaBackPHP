@@ -33,15 +33,13 @@ function listOrder($data)
             $result_user = mysqli_query($link, $sql_user);
             $currentRow_order['user'] = array();
             while ($row_user = mysqli_fetch_assoc($result_user)) {
-                $currentRow_user = array();
-                $currentRow_user['id'] = (int) $row_order['user_id'];
-                $currentRow_user['name'] = $row_user['name'];
-                $currentRow_user['birth'] = $row_user['birth'] == NULL ? $row_user['birth'] : (new Datetime($row_user['birth']))->format(DATE_ATOM);
-                $currentRow_user['login'] = $row_user['login'];
-                $currentRow_user['cpf'] = $row_user['cpf'];
-                $currentRow_user['mail'] = $row_user['mail'];
-                $currentRow_user['type'] = $row_user['type'];
-                array_push($currentRow_order['user'], $currentRow_user);
+                $currentRow_order['user']['id'] = (int) $row_order['user_id'];
+                $currentRow_order['user']['name'] = $row_user['name'];
+                $currentRow_order['user']['birth'] = $row_user['birth'] == NULL ? $row_user['birth'] : (new Datetime($row_user['birth']))->format(DATE_ATOM);
+                $currentRow_order['user']['login'] = $row_user['login'];
+                $currentRow_order['user']['cpf'] = $row_user['cpf'];
+                $currentRow_order['user']['mail'] = $row_user['mail'];
+                $currentRow_order['user']['type'] = $row_user['type'];
             }
             $currentRow_order['products'] = array();
             $sql_product_order = 'SELECT * FROM product_order WHERE order_id = ' . $row_order['id'];

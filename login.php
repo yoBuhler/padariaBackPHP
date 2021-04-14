@@ -8,36 +8,38 @@ function login($data)
     // Define variables and initialize with empty values
     $login = $password = "";
     global $link;
+    $returned = array();
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (paramsIsValid($data, array(['login', 'str'], ['password', 'str']))) {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        [$loginAndPasswordIsValid, $returned] = paramsIsValid($data, array(['login', 'str'], ['password', 'str']), $returned);
+        if ($loginAndPasswordIsValid) {
             $login = $data['login'];
             $password = $data['password'];
 
             $sql = "SELECT id, name, birth, login, cpf, mail, type, password FROM user WHERE login = '" . $login . "' and active";
             if ($result = mysqli_query($link, $sql)) {
                 $currentUser = mysqli_fetch_assoc($result);
-                if (password_verify($password, $currentUser["password"])) {
-                    $return = new stdClass();
+                if (password_verify($password, $currentUser['password'])) {
+                    $returned = array();
                     session_start();
-                    $return->id = $currentUser["id"];
-                    $return->name = $currentUser["name"];
-                    $return->birth = $currentUser["birth"] == NULL ? $currentUser["birth"] : (new Datetime($currentUser["birth"]))->format(DATE_ATOM);
-                    $return->login = $currentUser["login"];
-                    $return->cpf = $currentUser["cpf"];
-                    $return->mail = $currentUser["mail"];
-                    $return->type = $currentUser["type"];
-                    $_SESSION['currentUser'] = $return;
-                    echo json_encode($return);
+                    $returned['id'] = $currentUser['id'];
+                    $returned['name'] = $currentUser['name'];
+                    $returned['birth'] = $currentUser['birth'] == NULL ? $currentUser['birth'] : (new Datetime($currentUser['birth']))->format(DATE_ATOM);
+                    $returned['login'] = $currentUser['login'];
+                    $returned['cpf'] = $currentUser['cpf'];
+                    $returned['mail'] = $currentUser['mail'];
+                    $returned['type'] = $currentUser['type'];
+                    $_SESSION['currentUser'] = $returned;
                 } else {
-                    $return = array();
-                    $return["errorPassword"] = 'ERROR: Invalid password';
-                    echo json_encode($return);
+                    $returned['errorPassword'] = 'ERROR: Invalid password';
                 }
                 $result->close();
             }
         }
         // Close connection
         mysqli_close($link);
+    }
+    if (!empty($returned)) {
+        echo json_encode($returned);
     }
 }

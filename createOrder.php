@@ -10,12 +10,13 @@ function createOrder($data)
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isAuthenticated()) {
             $returned = array();
-            mysqli_query($link, "INSERT INTO orders (user_id, created_at) VALUES (" . $_SESSION['currentUser']->id . ", NOW())");
+            mysqli_query($link, "INSERT INTO orders (user_id, created_at) VALUES (" . $_SESSION['currentUser']['id'] . ", NOW())");
             $data['id'] = mysqli_insert_id($link);
             $returned['id'] = $data['id'];
             $returned['products'] = array();
             $validateQuantitys = true;
-            if (paramsIsValid($data, array(['products', 'arr']))) {
+            [$productsIsValid, $returned] = paramsIsValid($data, array(['products', 'arr']), $returned);
+            if ($productsIsValid) {
                 // Validate quantity and remove quantitys
                 foreach ($data['products'] as $row) {
                     $currentBoolToAdd = true;
