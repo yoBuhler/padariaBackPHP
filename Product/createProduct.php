@@ -1,7 +1,4 @@
 <?php
-// Include config file
-require_once "config.php";
-require_once "util.php";
 
 function createProduct($data)
 {

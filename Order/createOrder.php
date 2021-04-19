@@ -1,7 +1,4 @@
 <?php
-// Include config file
-require_once "config.php";
-require_once "util.php";
 
 function createOrder($data)
 {
@@ -12,6 +9,15 @@ function createOrder($data)
             $returned = array();
             mysqli_query($link, "INSERT INTO orders (user_id, created_at) VALUES (" . $_SESSION['currentUser']['id'] . ", NOW())");
             $data['id'] = mysqli_insert_id($link);
+            [$statusIsValid, $returned] = paramsIsValid($data, array(['status', 'str']), $returned);
+            if ($statusIsValid) {
+                $sql = "UPDATE orders SET status = '" . $data['status'] . "' WHERE id = " . $data['id'];
+                if (mysqli_query($link, $sql) === true) {
+                    $returned['status'] = $data['status'];
+                } else {
+                    $returned['errorStatus'] = 'ERROR: This status ' . $data['status'] . ' cannot updated';
+                }
+            }
             $returned['id'] = $data['id'];
             $returned['products'] = array();
             $validateQuantitys = true;

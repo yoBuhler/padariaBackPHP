@@ -2,52 +2,24 @@
 
 // Include router class
 include('route.php');
+include('config.php');
+include('util.php');
 
 // Users Class
-include('login.php');
-include('createUser.php');
-include('updateUser.php');
+include('User/login.php');
+include('User/createUser.php');
+include('User/updateUser.php');
+include('User/listUser.php');
 
 // Products Class
-include('createProduct.php');
-include('updateProduct.php');
-include('listProduct.php');
+include('Product/createProduct.php');
+include('Product/updateProduct.php');
+include('Product/listProduct.php');
 
 // Orders Class
-include('createOrder.php');
-include('listOrder.php');
-
-// Add base route (startpage)
-// Route::add('/', function () {
-//     echo 'Welcome :-)';
-// });
-
-// // Simple test route that simulates static html file
-// Route::add('/test.html', function () {
-//     echo 'Hello from test.html';
-// });
-
-// // Post route example
-// Route::add('/contact-form', function () {
-//     echo '<form method="post"><input type="text" name="test" /><input type="submit" value="send" /></form>';
-// }, 'get');
-
-// // Post route example
-// Route::add('/contact-form', function () {
-//     echo 'Hey! The form has been sent:<br/>';
-//     print_r($_POST);
-// }, 'post');
-
-// Accept only numbers as parameter. Other characters will result in a 404 error
-Route::add('/test/list/([0-9]*)', function ($var1) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    print_r($data);
-    if (!empty($var1)) {
-        echo $var1 . ' is a great number!';
-    } else {
-        echo 'Not was passed a number!';
-    }
-}, array('post'));
+include('Order/createOrder.php');
+include('Order/updateOrder.php');
+include('Order/listOrder.php');
 
 // Users Methods
 
@@ -65,6 +37,14 @@ Route::add('/user/update/', function () {
     $data = json_decode(file_get_contents('php://input'), true);
     updateUser($data);
 }, array('post'));
+
+Route::add('/user/list/([0-9]*)', function ($id) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    if (!empty(trim($id))) {
+        $data['id'] = $id;
+    }
+    listUser($data);
+}, array('post', 'get'));
 
 // Product Methods
 
@@ -94,21 +74,17 @@ Route::add('/order/create/', function () {
 }, array('post'));
 
 
+Route::add('/order/update/', function () {
+    $data = json_decode(file_get_contents('php://input'), true);
+    updateOrder($data);
+}, array('post'));
+
 Route::add('/order/list/([0-9]*)', function ($id) {
     $data = json_decode(file_get_contents('php://input'), true);
     if (!empty(trim($id))) {
         $data['id'] = $id;
     }
     listOrder($data);
-}, array('post', 'get'));
-
-Route::add('/printArray', function () {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    foreach ($data['array'] as $row) {
-        echo($row['id']);
-        echo($row['seila']);
-    }
 }, array('post', 'get'));
 
 Route::run('/');

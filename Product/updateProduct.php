@@ -1,7 +1,4 @@
 <?php
-// Include config file
-require_once "config.php";
-require_once "util.php";
 
 function updateProduct($data)
 {
@@ -100,10 +97,10 @@ function updateProduct($data)
                 }
                 // Close connection
                 mysqli_close($link);
+            }
 
-                if (!empty($returned)) {
-                    echo json_encode($returned);
-                }
+            if (!empty($returned)) {
+                echo json_encode($returned);
             }
         }
     }

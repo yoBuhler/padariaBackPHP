@@ -1,7 +1,4 @@
 <?php
-// Include config file
-require_once 'config.php';
-require_once 'util.php';
 
 function updateUser($data)
 {
@@ -106,6 +103,18 @@ function updateUser($data)
                     $returned['type'] = $data['type'];
                 } else {
                     $returned['errorType'] = 'ERROR: This type ' . $data['type'] . ' cannot updated';
+                }
+            }
+            [$activeIsValid, $returned] = paramsIsValid($data, array(['active', 'bool']), $returned);
+            if ($activeIsValid) {
+                $sql = "UPDATE user SET active = " . (int) $data['active'] . " WHERE id = " . $data['id'];
+                if (mysqli_query($link, $sql) === true) {
+                    if ($data['id'] == $_SESSION['currentUser']['id']) {
+                        $_SESSION['currentUser']['active'] = $data['active'];
+                    }
+                    $returned['active'] = $data['active'];
+                } else {
+                    $returned['errorActive'] = 'ERROR: This active ' . $data['active'] . ' cannot updated';
                 }
             }
             [$birthIsValid, $returned] = paramsIsValid($data, array(['birth', 'str']), $returned);
