@@ -29,6 +29,14 @@ function login($data)
                     $_SESSION['currentUser'] = $returned;
                 } else {
                     $returned['errorPassword'] = 'ERROR: Invalid password';
+                    if (session_id() == '') {
+                        session_start();
+                    }
+                
+                    session_unset();
+                    session_destroy();
+                
+                    session_write_close();
                 }
                 $result->close();
             }

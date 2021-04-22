@@ -7,6 +7,7 @@ include('util.php');
 
 // Users Class
 include('User/login.php');
+include('User/logout.php');
 include('User/createUser.php');
 include('User/updateUser.php');
 include('User/listUser.php');
@@ -27,6 +28,10 @@ Route::add('/login/', function () {
     $data = json_decode(file_get_contents('php://input'), true);
     login($data);
 }, array('post'));
+
+Route::add('/logout/', function () {
+    logout();
+}, array('post', 'get'));
 
 Route::add('/user/create/', function () {
     $data = json_decode(file_get_contents('php://input'), true);

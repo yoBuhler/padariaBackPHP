@@ -84,12 +84,14 @@ function isAuthenticated()
             $_returned = array();
             $_returned['errorAuthenticate'] = 'ERROR: This session is null';
             echo json_encode($_returned);
+            session_regenerate_id(true);
             return false;
         }
     } else {
         $_returned = array();
         $_returned['errorAuthenticate'] = 'ERROR: This session is not authenticate';
         echo json_encode($_returned);
+        session_regenerate_id(true);
         return false;
     }
 }
