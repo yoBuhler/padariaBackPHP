@@ -13,12 +13,18 @@ function login($data)
             $login = $data['login'];
             $password = $data['password'];
 
-            $sql = "SELECT id, name, birth, login, cpf, mail, type, password FROM user WHERE login = '" . $login . "' and active";
-            if ($result = mysqli_query($link, $sql)) {
-                $currentUser = mysqli_fetch_assoc($result);
+            $stmt = $link->prepare("SELECT id, name, birth, login, cpf, mail, type, password FROM user WHERE login = ? and active");
+            $stmt->bind_param('s', $login);
+            $stmt->execute();
+
+            $rows = $stmt->get_result();
+
+            if ($rows) {
+                $currentUser = mysqli_fetch_array($rows);
                 if (password_verify($password, $currentUser['password'])) {
                     $returned = array();
                     session_start();
+                    $returned['PHPSESSID'] = session_id();
                     $returned['id'] = $currentUser['id'];
                     $returned['name'] = $currentUser['name'];
                     $returned['birth'] = $currentUser['birth'] == NULL ? $currentUser['birth'] : (new Datetime($currentUser['birth']))->format(DATE_ATOM);
@@ -38,8 +44,8 @@ function login($data)
                 
                     session_write_close();
                 }
-                $result->close();
             }
+            $stmt->close();
         }
         // Close connection
         mysqli_close($link);
