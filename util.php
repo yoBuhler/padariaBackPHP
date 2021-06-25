@@ -98,7 +98,7 @@ function isAuthenticated()
 
 function loginAlreadyExists($login, $link, $_validateData)
 {
-    $sql = "SELECT id FROM user WHERE login = ?";
+    $sql = "SELECT id FROM user WHERE login = AES_DECRYPT(?, 'CriptoDaPadoca')";
     $_returned = true;
     if ($stmt = mysqli_prepare($link, $sql)) {
         // Bind variables to the prepared statement as parameters
@@ -126,4 +126,10 @@ function loginAlreadyExists($login, $link, $_validateData)
     }
 
     return array($_returned, $_validateData);
+}
+
+function encrypt($var) {
+    $saltCripto = 'wNYtCnelXf0a6uiJ';
+    $criptoKey = 'CriptoDaPadoca';
+    return openssl_encrypt($var, 'AES-256-CBC', $criptoKey, OPENSSL_RAW_DATA, $saltCripto);
 }

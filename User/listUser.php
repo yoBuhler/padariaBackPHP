@@ -30,7 +30,7 @@ function listUser($data)
             }
         }
 
-        $sql = 'SELECT id, name, birth, login, cpf, mail, type, active FROM user' . (empty($filter_id) ? '' : ' WHERE ' . implode(' AND ', $filter_id));
+        $sql = "SELECT id, name, birth, AES_DECRYPT(login, 'CriptoDaPadoca') as login, cpf, mail, type, active FROM user" . (empty($filter_id) ? '' : ' WHERE ' . implode(' AND ', $filter_id));
         $result = mysqli_query($link, $sql);
         while ($row = mysqli_fetch_assoc($result)) {
             $currentRow = array();

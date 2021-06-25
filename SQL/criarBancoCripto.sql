@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS user(
     name varchar(255),
     password varchar(255),
     birth date,
-    login varchar(255) NOT NULL,
+    login BLOB NOT NULL,
     cpf varchar(11),
     mail varchar(255),
     type varchar(255),

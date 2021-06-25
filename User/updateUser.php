@@ -26,7 +26,7 @@ function updateUser($data)
                 $data['login'] = trim($data['login']);
                 [$loginAlreadyExists, $returned] = loginAlreadyExists($data['login'], $link, $returned);
                 if (!$loginAlreadyExists) {
-                    $sql = "UPDATE user SET login='" . $data['login'] . "' WHERE id = " . $data['id'];
+                    $sql = "UPDATE user SET login=AES_ENCRYPT('" . $data['login'] . "', 'CriptoDaPadoca') WHERE id = " . $data['id'];
                     if (mysqli_query($link, $sql) === true) {
                         if ($data['id'] == $_SESSION['currentUser']['id']) {
                             $_SESSION['currentUser']['login'] = $data['login'];

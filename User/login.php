@@ -13,14 +13,14 @@ function login($data)
             $login = $data['login'];
             $password = $data['password'];
 
-            $stmt = $link->prepare("SELECT id, name, birth, login, cpf, mail, type, password FROM user WHERE login = ? and active");
+            $stmt = $link->prepare("SELECT id, name, birth, AES_DECRYPT(login, 'CriptoDaPadoca') as login, cpf, mail, type, password FROM user WHERE AES_DECRYPT(login, 'CriptoDaPadoca') = ? and active");
             $stmt->bind_param('s', $login);
             $stmt->execute();
 
             $rows = $stmt->get_result();
 
             if ($rows) {
-                $currentUser = mysqli_fetch_array($rows);
+                $currentUser = mysqli_fetch_assoc($rows);
                 if (password_verify($password, $currentUser['password'])) {
                     $returned = array();
                     session_start();

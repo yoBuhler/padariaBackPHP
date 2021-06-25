@@ -16,7 +16,7 @@ function createUser($data)
             $login_err = "Please enter a login.";
         } else {
             // Prepare a select statement
-            $sql = "SELECT id FROM user WHERE login = ?";
+            $sql = "SELECT id FROM user WHERE AES_DECRYPT(login, 'CriptoDaPadoca') = ?";
 
             if ($stmt = mysqli_prepare($link, $sql)) {
                 // Bind variables to the prepared statement as parameters
@@ -54,11 +54,12 @@ function createUser($data)
         if (empty($login_err) && empty($password_err)) {
 
             // Prepare an insert statement
-            $sql = "INSERT INTO user (login, password, active) VALUES (?, ?, TRUE)";
+            $sql = "INSERT INTO user (login, password, active) VALUES (AES_ENCRYPT(?, 'CriptoDaPadoca'), ?, TRUE)";
 
             if ($stmt = mysqli_prepare($link, $sql)) {
                 // Bind variables to the prepared statement as parameters
                 mysqli_stmt_bind_param($stmt, "ss", $param_login, $param_password);
+                // mysqli_stmt_bind_param($stmt, "s", $param_password);
 
                 // Set parameters
                 $param_login = $login;
@@ -67,7 +68,7 @@ function createUser($data)
                 // Attempt to execute the prepared statement
                 if (mysqli_stmt_execute($stmt)) {
                     // Redirect to login page
-                    $sql = "SELECT id FROM user WHERE login = '" . $param_login . "' and password = '" . $param_password . "'";
+                    $sql = "SELECT id FROM user WHERE login = AES_ENCRYPT('" . $param_login . "', 'CriptoDaPadoca') and password = '" . $param_password . "'";
                     if ($result = mysqli_query($link, $sql)) {
                         $currentUser = mysqli_fetch_assoc($result);
                         $return = new stdClass();
@@ -81,6 +82,8 @@ function createUser($data)
 
                 // Close statement
                 mysqli_stmt_close($stmt);
+            } else {
+                echo $link->error;
             }
         } else {
             $return = new stdClass();
